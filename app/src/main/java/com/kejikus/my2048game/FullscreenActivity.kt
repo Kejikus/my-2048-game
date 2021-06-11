@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.kejikus.my2048game.databinding.ActivityFullscreenBinding
+import kotlin.random.Random
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -28,6 +29,8 @@ class FullscreenActivity : AppCompatActivity() {
     private var isFullscreen: Boolean = false
 
     private val hideRunnable = Runnable { hide() }
+
+    private val gameController = GameController("Hello! ")
 
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
@@ -57,13 +60,6 @@ class FullscreenActivity : AppCompatActivity() {
 
         fullscreenContentControls = binding.fullscreenContentControls
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-//        binding.dummyButton.setOnTouchListener(delayHideTouchListener)
-
-//        requestWindowFeature(Window.FEATURE_NO_TITLE)
-
         val insetsController = WindowInsetsControllerCompat(window, binding.root)
         insetsController.hide(WindowInsetsCompat.Type.statusBars())
         insetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -85,8 +81,6 @@ class FullscreenActivity : AppCompatActivity() {
         // are available.
         delayedHide(100)
     }
-
-
 
     private fun toggle() {
         if (isFullscreen) {
@@ -115,6 +109,10 @@ class FullscreenActivity : AppCompatActivity() {
     private fun delayedHide(delayMillis: Int) {
         hideHandler.removeCallbacks(hideRunnable)
         hideHandler.postDelayed(hideRunnable, delayMillis.toLong())
+    }
+
+    fun onButtonClick(view: View) {
+        gameController.buttonClick(binding.sampleText)
     }
 
     companion object {
