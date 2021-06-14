@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">My 2048 Game</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="menu_title">Kejikus\' 2048 Game</string>
+    <string name="copyright">©kejikus, 2021 <br />https://github.com/Kejikus</string>
+    <string name="play_button">Play</string>
+    <string name="settings_button">Settings</string>
+    <string name="about_button">About</string>
+    <string name="title_activity_game">FullscreenActivity</string>
 </resources>

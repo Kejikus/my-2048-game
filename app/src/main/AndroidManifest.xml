@@ -10,10 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.My2048Game">
         <activity
-            android:name=".FullscreenActivity"
+            android:name=".GameActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_game"
+            android:theme="@style/Theme.My2048Game.ImmersiveFullscreen"></activity>
+        <activity
+            android:name=".MainMenuActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/Theme.My2048Game.Fullscreen">
+            android:theme="@style/Theme.My2048Game.ImmersiveFullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
