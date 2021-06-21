@@ -43,6 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:text="@string/play_button"
+            android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,6 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:text="@string/settings_button"
+            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -64,6 +66,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:text="@string/about_button"
+            android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
