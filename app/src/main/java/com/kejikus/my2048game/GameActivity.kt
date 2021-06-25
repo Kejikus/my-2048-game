@@ -46,6 +46,10 @@ class GameActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         makeImmersiveFullscreen(binding)
+
+        binding.menuButton.setOnClickListener {
+            this.finish()
+        }
     }
 
     override fun onResume() {
