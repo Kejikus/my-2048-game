@@ -1,36 +1,47 @@
 package com.kejikus.my2048game
 
-import androidx.appcompat.app.AppCompatActivity
 import android.annotation.SuppressLint
-import android.os.Build
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
+import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.kejikus.my2048game.databinding.ActivityGameBinding
+import com.kejikus.my2048game.game_logic.GameController
+import com.kejikus.my2048game.game_logic.Grid
+import com.kejikus.my2048game.game_logic.GridBound
+import com.kejikus.my2048game.game_logic.Tile
+import com.kejikus.my2048game.utils.Direction
+import com.kejikus.my2048game.utils.GameGestureListener
+import com.kejikus.my2048game.utils.PointCallback
 import com.kejikus.my2048game.utils.makeImmersiveFullscreen
+import com.kejikus.my2048game.views.GameGridView
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 class GameActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityGameBinding
-    private val viewModel by lazy { ViewModelProvider(this).get(GameViewModel::class.java) }
-    private lateinit var gridState: GameGridState
 
-    private lateinit var gridBinding: ConstraintLayout
+    private val viewModel by lazy { ViewModelProvider(this).get(GameViewModel::class.java) }
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var binding: ActivityGameBinding
+
+    private lateinit var gameController: GameController
+
+    private lateinit var gameGrid: GameGridView
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        sharedPreferences = getSharedPreferences("GameSettings", Context.MODE_PRIVATE)
+        gameController = GameController(this, viewModel, sharedPreferences)
+
         binding = ActivityGameBinding.inflate(layoutInflater)
-        gridBinding = binding.gameGrid
+        gameGrid = binding.gameGrid
 
         setContentView(binding.root)
 
@@ -39,17 +50,17 @@ class GameActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        gridState = viewModel.gridState.value ?: GameGridState(4, 1)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        viewModel.gridState.value = gridState
+        renderTiles()
     }
 
     private fun renderTiles() {
-        for ((tile, x, y) in gridState) {
+        if (gameGrid.model != viewModel)
+            gameGrid.model = viewModel
+        else
+            gameGrid.requestLayout()
+    }
 
-        }
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return gameController.gestureDetector.onTouchEvent(event)
     }
 }

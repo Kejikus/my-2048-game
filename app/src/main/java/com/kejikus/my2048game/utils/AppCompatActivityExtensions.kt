@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.viewbinding.ViewBinding
 
 fun AppCompatActivity.makeImmersiveFullscreen(binding: ViewBinding) {
+    this.supportActionBar?.hide()
     val insetsController = WindowInsetsControllerCompat(window, binding.root)
 
     // Hide status bars and make them appear only by swipe
