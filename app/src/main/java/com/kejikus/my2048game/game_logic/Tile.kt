@@ -29,4 +29,8 @@ class Tile(val grid: Grid<Tile>, var value: Int) {
             mergedInto = null
         }
     }
+
+    fun getCurrentPosition(): GridBound<Tile>? {
+        return grid.iterator().asSequence().find { it.data === this }
+    }
 }

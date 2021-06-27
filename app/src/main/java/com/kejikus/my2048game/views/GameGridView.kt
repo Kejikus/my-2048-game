@@ -2,12 +2,12 @@ package com.kejikus.my2048game.views
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.StyleRes
 import androidx.core.view.children
 import com.kejikus.my2048game.GameViewModel
+import com.kejikus.my2048game.utils.Point
+import com.kejikus.my2048game.utils.TransitionVector
 import java.util.*
 
 const val ATTR_TILE_PADDING = "tile_padding"
@@ -58,9 +58,47 @@ class GameGridView : ViewGroup {
     }
 
     private fun processModelData() {
-        removeAllViews()
-
         val gridState = model?.gridState?.value ?: return
+
+        val tilesList = gridState.iterator().asSequence().toMutableList()
+        val tileViewsList: List<TileView> = children.toList().filterIsInstance<TileView>()
+
+        outer@for (tileView in tileViewsList) {
+            val bind = tileView.dataBinding ?: break
+
+            tileView.transitionStart = bind.point()
+
+            val mergedInto = bind.data.mergedInto
+            if (mergedInto != null) {
+                tileView.fadeOut = true
+                tileView.transitionEnd = mergedInto.getCurrentPosition()?.point()
+                tileView.dataBinding = null
+                continue
+            }
+
+            for (tile in tilesList) {
+                if (bind.data == tile.data) {
+                    tileView.dataBinding = tile
+                    tilesList.remove(tile)
+                    continue@outer
+                }
+            }
+
+            tileView.fadeOut = true
+            tileView.dataBinding = null
+        }
+
+        // Add new tiles
+        for (tile in tilesList) {
+            val tileView = TileView(context)
+            tileView.dataBinding = tile
+            tileView.layoutParams = LayoutParams(width / gridState.size, height / gridState.size)
+            addView(tileView)
+        }
+
+        // TODO: Layout animation implementation
+
+        removeAllViews()
 
         for (tile in gridState) {
             val tileView = TileView(context)
@@ -90,20 +128,17 @@ class GameGridView : ViewGroup {
         for (i in 0 until count) {
             val view = getChildAt(i)
             if (view !is TileView) {
-                Log.w(null, "Removing not tile")
                 removeCache.add(view)
                 continue
             }
 
             val tileData = view.dataBinding
             if (tileData == null) {
-                Log.w(null, "Removing unbound tile")
                 removeCache.add(view)
                 continue
             }
 
             if (tileData.data.mergedInto != null) {
-                Log.w(null, "Removing merged tile")
                 tileData.data.clearMergeCache()
                 removeCache.add(view)
                 continue
@@ -111,7 +146,6 @@ class GameGridView : ViewGroup {
 
             val x = tileData.x * (colWidth + tilePadding) + paddingLeft
             val y = tileData.y * (rowHeight + tilePadding) + paddingTop
-            Log.w(null, "Layout at ${tileData.x}, ${tileData.y}")
             val widthMeasureSpec = MeasureSpec.makeMeasureSpec(colWidth, MeasureSpec.EXACTLY)
             val heightMeasureSpec = MeasureSpec.makeMeasureSpec(rowHeight, MeasureSpec.EXACTLY)
             view.measure(widthMeasureSpec, heightMeasureSpec)

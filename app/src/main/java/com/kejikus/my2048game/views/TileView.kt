@@ -11,6 +11,7 @@ import com.kejikus.my2048game.R
 import com.kejikus.my2048game.databinding.TileViewBinding
 import com.kejikus.my2048game.game_logic.GridBound
 import com.kejikus.my2048game.game_logic.Tile
+import com.kejikus.my2048game.utils.Point
 import kotlin.math.pow
 import kotlin.properties.Delegates
 
@@ -42,6 +43,10 @@ class TileView : FrameLayout {
             field = value
             updateValue(value?.data)
         }
+
+    var transitionStart: Point? = null
+    var transitionEnd: Point? = null
+    var fadeOut: Boolean = false
 
     private fun updateValue(value: Tile?) {
         if (value != null) {

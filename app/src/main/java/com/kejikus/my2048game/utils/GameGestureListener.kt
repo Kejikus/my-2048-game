@@ -7,7 +7,7 @@ const val MIN_SWIPE_DISTANCE = 100
 
 class GameGestureListener(
 val swipeCallback: SwipeCallback,
-val doubleClickCallback: DoubleClickCallback)
+val doubleClickCallback: DoubleClickCallback? = null)
 : GestureDetector.SimpleOnGestureListener() {
     override fun onFling(
         e1: MotionEvent?,
@@ -21,14 +21,14 @@ val doubleClickCallback: DoubleClickCallback)
             val deltaXAbs = Math.abs(deltaX)
             val deltaYAbs = Math.abs(deltaY)
 
-            val res: Direction? = when {
+            val res: SwipeDirection? = when {
                 deltaXAbs >= MIN_SWIPE_DISTANCE && deltaXAbs > deltaYAbs -> when {
-                    deltaX > 0 -> Direction.Right
-                    else -> Direction.Left
+                    deltaX > 0 -> SwipeDirection.Right
+                    else -> SwipeDirection.Left
                 }
                 deltaYAbs >= MIN_SWIPE_DISTANCE -> when {
-                    deltaY > 0 -> Direction.Down
-                    else -> Direction.Up
+                    deltaY > 0 -> SwipeDirection.Down
+                    else -> SwipeDirection.Up
                 }
                 else -> null
             }
@@ -41,7 +41,7 @@ val doubleClickCallback: DoubleClickCallback)
     }
 
     override fun onDoubleTap(e: MotionEvent?): Boolean {
-        doubleClickCallback()
+        doubleClickCallback?.invoke()
         return true
     }
 }

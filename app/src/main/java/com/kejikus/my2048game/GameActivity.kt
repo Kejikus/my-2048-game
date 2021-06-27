@@ -4,23 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.kejikus.my2048game.databinding.ActivityGameBinding
 import com.kejikus.my2048game.game_logic.GameController
-import com.kejikus.my2048game.game_logic.Grid
-import com.kejikus.my2048game.game_logic.GridBound
-import com.kejikus.my2048game.game_logic.Tile
-import com.kejikus.my2048game.utils.Direction
-import com.kejikus.my2048game.utils.GameGestureListener
-import com.kejikus.my2048game.utils.PointCallback
 import com.kejikus.my2048game.utils.makeImmersiveFullscreen
 import com.kejikus.my2048game.views.GameGridView
-import java.util.*
-import kotlin.concurrent.schedule
 
 
 class GameActivity : AppCompatActivity() {
