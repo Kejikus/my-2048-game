@@ -1,7 +1,5 @@
 package com.kejikus.my2048game.game_logic
 
-import android.util.Log
-
 class GridIterator<T>(private val grid: Grid<T>): Iterator<GridBound<T>> {
     private var x = 0
     private var y = 0

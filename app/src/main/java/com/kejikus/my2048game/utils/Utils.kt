@@ -1,5 +1,7 @@
 package com.kejikus.my2048game.utils
 
+import android.view.View
+import android.view.animation.Animation
 import com.kejikus.my2048game.databinding.ActivityMainMenuBinding
 
 enum class SwipeDirection {
@@ -22,3 +24,4 @@ typealias MAIN_MENU_BINDING = ActivityMainMenuBinding
 
 data class Point(val x: Int, val y: Int)
 data class TransitionVector(val from: Point, val to: Point)
+data class ViewAnimation(val view: View, val animation: Animation)

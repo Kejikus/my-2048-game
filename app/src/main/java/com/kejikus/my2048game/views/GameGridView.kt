@@ -4,10 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.*
 import androidx.core.view.children
 import com.kejikus.my2048game.GameViewModel
+import com.kejikus.my2048game.game_logic.Grid
+import com.kejikus.my2048game.game_logic.Tile
 import com.kejikus.my2048game.utils.Point
 import com.kejikus.my2048game.utils.TransitionVector
+import com.kejikus.my2048game.utils.ViewAnimation
 import java.util.*
 
 const val ATTR_TILE_PADDING = "tile_padding"
@@ -27,6 +31,9 @@ class GameGridView : ViewGroup {
         )
     }
 
+    private val transitionAnimations: Vector<ViewAnimation>
+        = Vector(16)
+
     private val tilePadding: Int
     private val removeCache: Vector<View> = Vector(16)
     private fun removeViews() {
@@ -43,6 +50,43 @@ class GameGridView : ViewGroup {
                 requestLayout()
             }
         }
+
+    private val paddedWidth
+        get() = width - paddingLeft - paddingRight
+
+    private val paddedHeight
+        get() = height - paddingTop - paddingBottom
+
+
+    private fun getColWidth(gridState: Grid<Tile>): Int
+        = (paddedWidth - tilePadding * (gridState.size - 1)) / gridState.size
+
+    private fun getRowHeight(gridState: Grid<Tile>): Int
+        = (paddedHeight - tilePadding * (gridState.size - 1)) / gridState.size
+
+
+    private fun getTileX(colWidth: Int, col: Int): Int
+        = col * (colWidth + tilePadding) + paddingLeft
+
+    private fun getTileY(rowHeight: Int, row: Int): Int
+        = row * (rowHeight + tilePadding) + paddingTop
+
+
+    private fun makeTileTranslateAnimation(
+            colWidth: Int, rowHeight: Int,
+            tileStart: Point, tileEnd: Point)
+        = TranslateAnimation(
+            TranslateAnimation.RELATIVE_TO_PARENT, getTileX(colWidth, tileStart.x).toFloat(),
+            TranslateAnimation.RELATIVE_TO_PARENT, getTileY(rowHeight, tileStart.y).toFloat(),
+            TranslateAnimation.RELATIVE_TO_PARENT, getTileX(colWidth, tileEnd.x).toFloat(),
+            TranslateAnimation.RELATIVE_TO_PARENT, getTileY(rowHeight, tileEnd.y).toFloat()
+        )
+
+    private val fadeInAnimation
+        get() = AlphaAnimation(0f, 1f)
+
+    private val fadeOutAnimation
+        get() = AlphaAnimation(1f, 0f)
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChildren(widthMeasureSpec, heightMeasureSpec)
@@ -63,16 +107,31 @@ class GameGridView : ViewGroup {
         val tilesList = gridState.iterator().asSequence().toMutableList()
         val tileViewsList: List<TileView> = children.toList().filterIsInstance<TileView>()
 
+        val colWidth = getColWidth(gridState)
+        val rowHeight = getRowHeight(gridState)
+        val aType: Int = TranslateAnimation.RELATIVE_TO_PARENT
+
         outer@for (tileView in tileViewsList) {
             val bind = tileView.dataBinding ?: break
 
             tileView.transitionStart = bind.point()
+            val transitionStart = bind.point()
 
             val mergedInto = bind.data.mergedInto
             if (mergedInto != null) {
-                tileView.fadeOut = true
-                tileView.transitionEnd = mergedInto.getCurrentPosition()?.point()
+                val transitionEnd = mergedInto.getCurrentPosition()!!.point()
                 tileView.dataBinding = null
+
+                val aSet = AnimationSet(true)
+                aSet.addAnimation(makeTileTranslateAnimation(
+                    colWidth, rowHeight, transitionStart, transitionEnd
+                ))
+                aSet.addAnimation(fadeOutAnimation)
+                aSet.duration = 300
+                aSet.interpolator = DecelerateInterpolator()
+
+                tileView.animation = aSet
+
                 continue
             }
 
@@ -93,6 +152,7 @@ class GameGridView : ViewGroup {
             val tileView = TileView(context)
             tileView.dataBinding = tile
             tileView.layoutParams = LayoutParams(width / gridState.size, height / gridState.size)
+            tileView.fadeIn = true
             addView(tileView)
         }
 
@@ -110,7 +170,7 @@ class GameGridView : ViewGroup {
         requestLayout()
     }
 
-    fun layoutChildren(left: Int, top: Int, right: Int, bottom: Int) {
+    private fun layoutChildren(left: Int, top: Int, right: Int, bottom: Int) {
         val gridState = model?.gridState?.value
         if (gridState == null) {
             if (childCount > 0)
