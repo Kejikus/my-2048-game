@@ -24,7 +24,7 @@ class GameController(val context: Context, val viewModel: GameViewModel, sharedP
             gridState = saved
         }
 
-        gestureDetector = GestureDetector(context, GameGestureListener({ transition(it) }))
+        gestureDetector = GestureDetector(context, GameGestureListener({ transition(it) }, { viewModel.gridState.postValue(gridState) }))
     }
 
     private fun checkItems(item: GridBound<Tile>, direction: SwipeDirection,

@@ -44,10 +44,8 @@ class TileView : FrameLayout {
             updateValue(value?.data)
         }
 
-    var transitionStart: Point? = null
-    var transitionEnd: Point? = null
-    var fadeOut: Boolean = false
-    var fadeIn: Boolean = false
+    var ignore: Boolean = false
+    var forceLayout: Boolean = true
 
     private fun updateValue(value: Tile?) {
         if (value != null) {
